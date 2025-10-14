@@ -65,5 +65,4 @@ weavue/
 
 - Youssef Al Mostafa [LinkedIn](https://linkedin.com/in/youssef-al-mostafa)
 - [youssefalmostafa2@gmail.com](mailto:youssefalmostafa2@gmail.com)
-
-Project Link: [https://github.com/youssef-al-mostafa/Weavue](https://github.com/youssef-al-mostafa/Weavue)
+  
