@@ -24,5 +24,6 @@ export const useCityStore = defineStore('city', {
     clearCities() {
       this.list = []
     }
-  }
+  },
+  persist: true
 })

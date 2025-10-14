@@ -14,5 +14,6 @@ export const useLocationStore = defineStore('location', {
       this.lat = 0
       this.long = 0
     }
-  }
+  },
+  persist: true
 })

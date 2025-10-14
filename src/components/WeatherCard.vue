@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, watchEffect } from 'vue';
 import { useWeather } from '@/composables/useWeather';
-import { DotLottieVue } from '@lottiefiles/dotlottie-vue';
 import { weatherGif } from '@/stores/weatherGif';
 import type { WeatherData } from '@/types/weather';
 

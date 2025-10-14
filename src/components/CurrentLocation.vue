@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useLocationStore } from '@/stores/locationStore';
 
 const locationStore = useLocationStore();
@@ -13,8 +13,7 @@ const errorMessage = ref({
   active: false
 });
 
-const getGeolocation = () => {
-
+const goWithCurrentLocation = () => {
   errorMessage.value.active = false;
 
   if ("geolocation" in navigator) {
@@ -23,6 +22,7 @@ const getGeolocation = () => {
       (position) => {
         latitude.value = position.coords.latitude
         longitude.value = position.coords.longitude
+        locationStore.setLocation(latitude.value, longitude.value);
         isLoading.value = false
       },
       (error) => {
@@ -38,21 +38,7 @@ const getGeolocation = () => {
         enableHighAccuracy: true
       }
     )
-  } 
-}
-
-const goWithCurrentLocation = () => {
-  getGeolocation();
-
-  setTimeout(() => {
-    //console.log('lat:', latitude.value, 'long:', longitude.value);
-    locationStore.setLocation(latitude.value, longitude.value);
-    errorMessage.value.active ? console.log('Error state:', errorMessage.value.active) : '';
-
-    if (latitude.value === null && longitude.value === null && !errorMessage.value.active) {
-      errorMessage.value.active = true;
-    }
-  }, 1000);
+  }
 };
 
 const customizeErrorMessage = (code: number) => {
@@ -64,23 +50,20 @@ const customizeErrorMessage = (code: number) => {
     errorMessage.value.msg = "The request to get user location timed out.";
   }
 }
-onMounted(() => {
-  //getGeolocation()
-})
 </script>
 <template>
   <div class="current-location-cont mb-3">
-    <button class="btn bg-transparent border-none 
-                   font-sans text-nowrap shadow-none 
-                   flex justify-start gap-4 text-[18px] 
-                   text-yellow-600 px-0 w-fit" 
+    <button class="btn bg-transparent border-none
+                   font-sans text-nowrap shadow-none
+                   flex justify-start gap-4 text-[18px]
+                   text-yellow-600 px-0 w-fit"
                    @click="goWithCurrentLocation">
-      <svg version="1.1" id="Layer_1" 
-        xmlns="http://www.w3.org/2000/svg" 
+      <svg version="1.1" id="Layer_1"
+        xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
-        x="0px" y="0px" width="24px" height="24px" 
+        x="0px" y="0px" width="24px" height="24px"
         viewBox="0 0 120.87 122.88"
-        style="enable-background:new 0 0 120.87 122.88" 
+        style="enable-background:new 0 0 120.87 122.88"
         xml:space="preserve">
         <g>
           <path
@@ -95,7 +78,9 @@ onMounted(() => {
     <div v-if="errorMessage.active"
       class="fixed top-0 left-0 right-0 z-50 mx-auto max-w-md mt-4 shadow-lg alert alert-error" role="alert">
       <span>{{ errorMessage.msg }}</span>
-      <button @click="errorMessage.active = false" class="btn btn-sm btn-circle ml-auto bg-transparent border-0 shadow-none text-black">
+      <button @click="errorMessage.active = false"
+              class="btn btn-sm btn-circle ml-auto bg-transparent
+                     border-0 shadow-none text-black">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />

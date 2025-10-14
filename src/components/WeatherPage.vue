@@ -2,17 +2,13 @@
 import WeatherCard from './WeatherCard.vue';
 import { useCityStore } from '@/stores/cityStore';
 import { useLocationStore } from '@/stores/locationStore';
-import { onMounted } from 'vue';
 
 const cityStore = useCityStore();
 const locationStore = useLocationStore();
 
-onMounted(() => {
-  //console.log('weather page mounted with this cities', cityStore.list)
-});
 </script>
 <template>
-  <section class="flex max-w-[1800px] px-6 mx-auto justify-start w-full pb-[80px]">
+  <section class="flex max-w-[1800px] px-6 mx-auto justify-start pt-[40px] pb-[0px] w-[96%]">
     <div class="weather-card-row flex justify-start gap-2 w-full flex-wrap">
       <WeatherCard v-if="locationStore.lat && locationStore.long" :lat="locationStore.lat" :long="locationStore.long" />
       <WeatherCard v-for="(city, index) in cityStore.list" :key="index" :cityName="city" />
