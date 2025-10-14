@@ -132,7 +132,7 @@ const chartOptions = computed(() => ({
 </script>
 
 <template>
-  <section class="forecast-section max-w-[1800px] mx-auto px-6 py-8">
+  <section class="forecast-section max-w-[1800px] w-[96%] mx-auto px-6 py-8">
     <div v-if="isLoading" class="loading-container text-center py-12">
       <p class="text-lg text-gray-600">Loading forecast data...</p>
     </div>

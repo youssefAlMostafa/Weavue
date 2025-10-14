@@ -10,8 +10,8 @@ const locationStore = useLocationStore();
 <template>
   <section class="flex max-w-[1800px] px-6 mx-auto justify-start pt-[40px] pb-[0px] w-[96%]">
     <div class="weather-card-row flex justify-start gap-2 w-full flex-wrap">
-      <WeatherCard v-if="locationStore.lat && locationStore.long" :lat="locationStore.lat" :long="locationStore.long" />
-      <WeatherCard v-for="(city, index) in cityStore.list" :key="index" :cityName="city" />
+      <WeatherCard v-if="locationStore.lat && locationStore.long" :lat="locationStore.lat" :long="locationStore.long" key="current-location" />
+      <WeatherCard v-for="(city, index) in cityStore.list" :key="`city-${city}-${index}`" :cityName="city" />
     </div>
   </section>
 </template>

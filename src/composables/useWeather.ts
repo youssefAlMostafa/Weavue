@@ -42,7 +42,7 @@ export function useWeather() {
   };
 
   const fetchWeatherByCity = async (city: string): Promise<void> => {
-    if (!city) {
+    if (!city || !city.trim()) {
       error.value = "City name is required";
       return;
     }
@@ -51,10 +51,11 @@ export function useWeather() {
     error.value = null;
 
     try {
-      weatherData.value = await getCurrentWeatherByCity(city);
-    } catch (err) {
+      weatherData.value = await getCurrentWeatherByCity(city.trim());
+    } catch (err: any) {
       error.value = "Failed to fetch weather data. Please try again later.";
-      console.error('Error fetching weather data:', err);
+      console.error('Error fetching weather data for city:', city, err);
+      console.error('Error details:', err.response?.data || err.message);
     } finally {
       isLoading.value = false;
     }
