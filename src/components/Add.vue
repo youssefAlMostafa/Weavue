@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import { cities } from '@/stores/cityStore';
+import { useCityStore } from '@/stores/cityStore';
 import { ref } from 'vue';
 
+const cityStore = useCityStore();
 const searchQuery = ref('');
 
 function handleInputChange() {
   if (searchQuery.value.trim()) {
-    cities.addCity(searchQuery.value.trim());
+    cityStore.addCity(searchQuery.value.trim());
     searchQuery.value = '';
   }
 }

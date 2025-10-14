@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.5-brightgreen.svg)](https://vuejs.org/)
+[![Pinia](https://img.shields.io/badge/Pinia-3.0-ffd859.svg)](https://pinia.vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC.svg)](https://tailwindcss.com/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF.svg)](https://vitejs.dev/)
@@ -17,6 +18,7 @@ A modern, elegant weather application built with Vue.js that provides accurate w
 ## 🚀 Technologies Used
 
 - **Frontend Framework**: Vue.js 3.5 with Composition API
+- **State Management**: Pinia 3.0
 - **Type Safety**: TypeScript
 - **Styling**: Tailwind CSS
 - **Build Tool**: Vite

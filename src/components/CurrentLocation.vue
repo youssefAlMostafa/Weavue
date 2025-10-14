@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { location } from '@/stores/locationStore';
+import { useLocationStore } from '@/stores/locationStore';
+
+const locationStore = useLocationStore();
 
 const latitude = ref<number>(0)
 const longitude = ref<number>(0)
@@ -44,14 +46,13 @@ const goWithCurrentLocation = () => {
 
   setTimeout(() => {
     //console.log('lat:', latitude.value, 'long:', longitude.value);
-    location.lat = latitude.value;  
-    location.long = longitude.value;
+    locationStore.setLocation(latitude.value, longitude.value);
     errorMessage.value.active ? console.log('Error state:', errorMessage.value.active) : '';
 
     if (latitude.value === null && longitude.value === null && !errorMessage.value.active) {
       errorMessage.value.active = true;
     }
-  }, 1000); 
+  }, 1000);
 };
 
 const customizeErrorMessage = (code: number) => {
