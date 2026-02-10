@@ -93,17 +93,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="weather-card-cont w-[16%] rounded-[16px] bg-gradient-to-b from-transparent to-white py-4 mt-2 mx-auto">
-    <div class="weather-page" v-if="isLoading || error || weatherData">
-      <div v-if="isLoading" class="loading-indicator">
+  <div class="w-[16%] text-black rounded-[16px] bg-gradient-to-b from-transparent to-white py-4 mt-2 mx-auto
+              max-[1100px]:w-[24%] max-lg:w-[33%] max-md:w-full">
+    <div class="p-4" v-if="isLoading || error || weatherData">
+      <div v-if="isLoading" class="italic text-gray-600">
         Loading weather data...
       </div>
 
-      <div v-else-if="error" class="error-message">
+      <div v-else-if="error" class="text-red-600 p-2 rounded bg-red-100/10">
         {{ error }}
       </div>
 
-      <div v-else-if="weatherData" class="weather-content">
+      <div v-else-if="weatherData" class="flex flex-col gap-2">
         <iframe class="rounded-[12px]" :src="getWeatherGif(weatherData)"></iframe>
         <h1 class="text-2xl font-bold">{{ temperature }}°C</h1>
         <p class="text-lg">{{ dateTime }}</p>
@@ -112,42 +113,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-<style lang="scss">
-.weather-card-cont {
-  color: black;
-
-  @media (max-width: 1100px) {
-    width: 24%;
-  }
-
-  @media (max-width: 991px) {
-    width: 33%;
-  }
-
-  @media (max-width: 767px) {
-    width: 100%;
-  }
-
-  .weather-page {
-    padding: 1rem;
-
-    .loading-indicator {
-      font-style: italic;
-      color: #666;
-    }
-
-    .error-message {
-      color: #e53e3e;
-      padding: 0.5rem;
-      border-radius: 0.25rem;
-      background-color: rgba(229, 62, 62, 0.1);
-    }
-
-    .weather-content {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-  }
-}
-</style>

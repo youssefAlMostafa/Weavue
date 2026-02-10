@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useLocationStore } from '@/stores/locationStore';
 
 const locationStore = useLocationStore();
@@ -7,37 +7,66 @@ const locationStore = useLocationStore();
 const latitude = ref<number>(0)
 const longitude = ref<number>(0)
 const isLoading = ref(false)
+const permissionRequested = ref(false)
 
 const errorMessage = ref({
   msg: "Error while fetching your location. Please allowed in your broswer.",
   active: false
 });
 
-const goWithCurrentLocation = () => {
+const getPosition = () => {
+  isLoading.value = true
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      latitude.value = position.coords.latitude
+      longitude.value = position.coords.longitude
+      locationStore.setLocation(latitude.value, longitude.value);
+      isLoading.value = false
+      permissionRequested.value = false
+    },
+    (error) => {
+      errorMessage.value.msg = `${error.message}`;
+      customizeErrorMessage(error.code);
+      errorMessage.value.active = true;
+      isLoading.value = false;
+      permissionRequested.value = false
+    },
+    {
+      timeout: 10000,
+      maximumAge: 0,
+      enableHighAccuracy: true
+    }
+  )
+}
+
+const goWithCurrentLocation = async () => {
   errorMessage.value.active = false;
 
   if ("geolocation" in navigator) {
-    isLoading.value = true
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        latitude.value = position.coords.latitude
-        longitude.value = position.coords.longitude
-        locationStore.setLocation(latitude.value, longitude.value);
-        isLoading.value = false
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        errorMessage.value.msg = `${error.message}`;
-        customizeErrorMessage(error.code);
-        errorMessage.value.active = true;
-        isLoading.value = false;
-      },
-      {
-        timeout: 10000,
-        maximumAge: 0,
-        enableHighAccuracy: true
+    if (navigator.permissions) {
+      try {
+        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' })
+
+        if (permissionStatus.state === 'granted') {
+          getPosition()
+        } else if (permissionStatus.state === 'prompt') {
+          permissionRequested.value = true
+          permissionStatus.onchange = () => {
+            if (permissionStatus.state === 'granted' && permissionRequested.value) {
+              getPosition()
+            }
+          }
+          getPosition()
+        } else {
+          errorMessage.value.msg = "Location permission denied. Please enable it in your browser settings.";
+          errorMessage.value.active = true;
+        }
+      } catch (error) {
+        getPosition()
       }
-    )
+    } else {
+      getPosition()
+    }
   }
 };
 
@@ -52,13 +81,15 @@ const customizeErrorMessage = (code: number) => {
 }
 </script>
 <template>
-  <div class="current-location-cont mb-3">
+  <div class="mb-3 max-md:text-center max-md:mb-8">
     <button class="btn bg-transparent border-none
                    font-sans text-nowrap shadow-none
                    flex justify-start gap-4 text-[18px]
-                   text-yellow-600 px-0 w-fit"
-                   @click="goWithCurrentLocation">
-      <svg version="1.1" id="Layer_1"
+                   text-yellow-600 px-0 w-fit
+                   max-md:mx-auto"
+                   @click="goWithCurrentLocation"
+                   :disabled="isLoading">
+      <svg v-if="!isLoading" version="1.1" id="Layer_1"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         x="0px" y="0px" width="24px" height="24px"
@@ -71,7 +102,8 @@ const customizeErrorMessage = (code: number) => {
             fill="#d08700" />
         </g>
       </svg>
-      Use My Current Location
+      <span v-if="isLoading" class="loading loading-spinner loading-md"></span>
+      {{ isLoading ? 'Getting your location...' : 'Use My Current Location' }}
     </button>
   </div>
   <Transition name="slide-down">
@@ -89,30 +121,15 @@ const customizeErrorMessage = (code: number) => {
     </div>
   </Transition>
 </template>
-<style scoped lang="scss">
-.current-location-cont {
-  @media (max-width: 767px) {
-    text-align: center;
-    margin-bottom: 2em;
-
-  }
-  .btn {
-    @media (max-width: 767px) {
-      margin-inline: auto;
-    }
-  }
+<style>
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
-.slide-down {
 
-  &-enter-active,
-  &-leave-active {
-    transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-
-  &-enter-from,
-  &-leave-to {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
+.slide-down-enter-from,
+.slide-down-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
 }
 </style>

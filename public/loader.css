@@ -1,0 +1,58 @@
+#app-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #87CEEB 0%, #4A90E2 50%, #2C5AA0 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease-out;
+}
+
+#app-loader.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader {
+  width: 240px;
+  height: 120px;
+  background:
+    radial-gradient(circle 75px at top right, #fbbf24 40%, #0000),
+    #60a5fa;
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: -120px;
+  width: 108px;
+  height: 60px;
+  --c: radial-gradient(farthest-side, #fff 96%, #0000);
+  background:
+    var(--c) 100% 100% / 30% 60%,
+    var(--c) 70% 0 / 50% 100%,
+    var(--c) 0 100% / 36% 68%,
+    var(--c) 27% 18% / 26% 40%,
+    linear-gradient(#fff 0 0) bottom / 67% 58%;
+  background-repeat: no-repeat;
+  animation: l10 2s linear infinite;
+}
+
+.loader:after {
+  top: 45px;
+  --l: 200%;
+}
+
+@keyframes l10 {
+  100% { left: var(--l, 105%); }
+}

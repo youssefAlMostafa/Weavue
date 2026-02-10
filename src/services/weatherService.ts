@@ -1,11 +1,12 @@
 import axios from 'axios';
 import type { WeatherData, ForecastData } from '@/types/weather';
+import { env } from '@/config/env';
 
 const weatherApi = axios.create({
   baseURL: 'https://api.weatherapi.com/v1',
 });
 
-const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+const API_KEY = env.WEATHER_API_KEY;
 
 export interface CitySearchResult {
   id: number;
