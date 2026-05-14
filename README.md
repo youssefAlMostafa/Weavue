@@ -36,7 +36,42 @@ A modern, elegant weather application built with Vue.js that provides accurate w
 
 - Node.js (>= 18.x)
 - npm or yarn
+- [WeatherAPI](https://www.weatherapi.com/) key (free tier available)
+- [API Ninjas](https://api-ninjas.com/) key (free tier available)
 
+##  Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/youssef-al-mostafa/Weavue.git
+   cd Weavue
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   Open `.env` and replace the placeholder values with your API keys:
+   ```env
+   VITE_WEATHER_API_KEY=your_weather_api_key_here
+   VITE_NINJA_API_KEY=your_api_ninjas_key_here
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+   The app will be available at `http://localhost:5173`.
+
+5. **Build for production** (optional)
+   ```bash
+   npm run build
+   ```
 
 ##  Project Structure
 

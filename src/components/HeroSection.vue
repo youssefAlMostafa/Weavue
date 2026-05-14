@@ -1,0 +1,243 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import type { ForecastData } from '@/types/weather'
+import {
+  conditionCodeToSkyClass,
+  formatCoords,
+  formatLocalTime,
+  getTimezoneLabel,
+  minutesAgo,
+  daylightLeft,
+  sunArcProgress,
+  sunArcDot,
+  uvLabel,
+} from '@/utils/weather'
+
+const props = defineProps<{
+  forecastData: ForecastData | null
+  isLoading: boolean
+}>()
+
+const loc   = computed(() => props.forecastData?.location)
+const cur   = computed(() => props.forecastData?.current)
+const today = computed(() => props.forecastData?.forecast.forecastday[0])
+
+const skyClass = computed(() =>
+  cur.value ? conditionCodeToSkyClass(cur.value.condition?.code ?? 1000, cur.value.is_day) : 'sky'
+)
+
+const skyGradient = computed(() => ({
+  sky:      'linear-gradient(170deg,#f7c9a4 0%,#f4ede2 55%,#d8e3e8 100%)',
+  dusk:     'linear-gradient(170deg,#4b6c8a 0%,#8a7a8e 50%,#e8a07a 100%)',
+  night:    'linear-gradient(170deg,#1a2538 0%,#2c3e5a 60%,#4b6c8a 100%)',
+  overcast: 'linear-gradient(170deg,#c8cdd0 0%,#dfe0dc 55%,#e9e3d5 100%)',
+}[skyClass.value] ?? 'linear-gradient(170deg,#f7c9a4 0%,#f4ede2 55%,#d8e3e8 100%)'))
+
+const isNight    = computed(() => skyClass.value === 'night' || skyClass.value === 'dusk')
+const textColor  = computed(() => isNight.value ? 'text-[var(--cream)]' : 'text-[var(--ink)]')
+const artOpacity = computed(() => isNight.value ? 0.55 : 0.95)
+
+const coords    = computed(() => loc.value?.lat && loc.value?.lon ? formatCoords(loc.value.lat, loc.value.lon) : '—')
+const localTime = computed(() => loc.value?.localtime ? formatLocalTime(loc.value.localtime) : '—')
+const timezone  = computed(() => getTimezoneLabel(loc.value?.tz_id))
+const updated   = computed(() => minutesAgo(cur.value?.last_updated))
+
+const sunrise  = computed(() => today.value?.astro.sunrise ?? '—')
+const sunset   = computed(() => today.value?.astro.sunset  ?? '—')
+const daylight = computed(() => daylightLeft(sunset.value))
+const arcT     = computed(() => sunArcProgress(sunrise.value, sunset.value))
+const arcDot   = computed(() => sunArcDot(arcT.value))
+const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
+</script>
+
+<template>
+  <!-- Loading skeleton -->
+  <div v-if="isLoading" class="grid grid-cols-[1.5fr_1fr] gap-6 mb-7 max-[1180px]:grid-cols-1">
+    <div class="rounded-[24px] border border-[var(--line)] bg-[var(--paper)] min-h-[520px] animate-pulse" />
+    <div class="flex flex-col gap-6">
+      <div class="rounded-[24px] border border-[var(--line)] bg-[var(--paper)] flex-1 animate-pulse min-h-[320px]" />
+      <div class="rounded-[24px] bg-[var(--ink)] animate-pulse h-[88px] opacity-20" />
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div v-else-if="!forecastData" class="grid grid-cols-[1.5fr_1fr] gap-6 mb-7 max-[1180px]:grid-cols-1">
+    <div class="rounded-[24px] border border-dashed border-[var(--line)] min-h-[520px] flex items-center justify-center [font-family:var(--mono)] text-[12px] tracking-widest uppercase text-[var(--muted)]">
+      Add a city to get started
+    </div>
+    <div class="rounded-[24px] border border-dashed border-[var(--line)] min-h-[200px]" />
+  </div>
+
+  <!-- Main hero -->
+  <section v-else class="grid grid-cols-[1.5fr_1fr] gap-6 mb-7 max-[1180px]:grid-cols-1">
+
+    <!-- ── Hero card ── -->
+    <div
+      class="relative border border-[var(--line)] rounded-[24px] overflow-hidden min-h-[520px]"
+      :class="textColor"
+      :style="{ background: skyGradient }"
+    >
+      <!-- Decorative sun art -->
+      <svg
+        class="absolute right-[-30px] top-[30px] w-[340px] h-[340px] z-[1] pointer-events-none"
+        viewBox="0 0 200 200" fill="none" aria-hidden="true"
+        :style="{ opacity: artOpacity }"
+      >
+        <defs>
+          <radialGradient id="heroSunG" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fff3cf"/>
+            <stop offset="60%" stop-color="#f4b977"/>
+            <stop offset="100%" stop-color="#e8642e" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="100" cy="100" r="58" fill="url(#heroSunG)"/>
+        <circle cx="100" cy="100" r="34" fill="#f4b977" opacity=".9"/>
+        <g stroke="#e8642e" stroke-width="2" stroke-linecap="round" opacity=".55">
+          <line x1="100" y1="20" x2="100" y2="36"/>
+          <line x1="100" y1="164" x2="100" y2="180"/>
+          <line x1="20"  y1="100" x2="36"  y2="100"/>
+          <line x1="164" y1="100" x2="180" y2="100"/>
+          <line x1="44"  y1="44"  x2="56"  y2="56"/>
+          <line x1="144" y1="144" x2="156" y2="156"/>
+          <line x1="44"  y1="156" x2="56"  y2="144"/>
+          <line x1="144" y1="56"  x2="156" y2="44"/>
+        </g>
+      </svg>
+
+      <!-- Content -->
+      <div class="py-9 px-[38px] flex flex-col min-h-[520px] relative z-[2]">
+
+        <!-- Meta row -->
+        <div class="flex justify-between items-start gap-4 [font-family:var(--mono)] text-[11.5px] tracking-[.12em] uppercase opacity-75">
+          <span class="flex items-center gap-2">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>
+            </svg>
+            {{ coords }}
+          </span>
+          <span class="flex items-center gap-[6px]">
+            <span class="inline-block w-[6px] h-[6px] rounded-full bg-[#3aa869] shadow-[0_0_0_4px_rgba(58,168,105,.18)]"></span>
+            Live · updated {{ updated }}
+          </span>
+        </div>
+
+        <!-- City name -->
+        <div class="[font-family:var(--serif)] font-normal leading-[.96] tracking-[-.02em] mt-auto">
+          <span class="block text-[84px] max-[1180px]:text-[64px]">{{ loc?.name }}</span>
+          <span class="block text-[24px] italic opacity-[.85]" :class="isNight ? 'text-[var(--cream)]' : 'text-[var(--ink-2)]'">
+            {{ loc?.region }}, {{ loc?.country }}
+          </span>
+        </div>
+
+        <!-- Temp + condition -->
+        <div class="flex items-start gap-[18px] mt-6">
+          <div class="[font-family:var(--serif)] text-[180px] max-[1180px]:text-[120px] leading-[.85] tracking-[-.04em] font-normal">
+            {{ Math.round(cur?.temp_c ?? 0) }}<sup class="text-[.32em] font-normal align-top ml-[6px] opacity-70">°C</sup>
+          </div>
+          <div class="pt-4">
+            <div class="[font-family:var(--serif)] italic text-[34px] leading-none tracking-[-.01em]">
+              {{ cur?.condition?.text }}
+            </div>
+            <span class="block mt-[14px] text-[13px] [font-family:var(--mono)] tracking-[.1em] uppercase opacity-70">
+              Feels {{ Math.round(cur?.feelslike_c ?? 0) }}° · H {{ Math.round(today?.day.maxtemp_c ?? 0) }}° L {{ Math.round(today?.day.mintemp_c ?? 0) }}°
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Stats stack ── -->
+    <div class="flex flex-col gap-6">
+
+      <!-- Metrics card -->
+      <div class="flex-1 bg-[var(--paper)] border border-[var(--line)] rounded-[24px] p-7 pb-6">
+        <div class="[font-family:var(--mono)] text-[11px] tracking-[.14em] uppercase text-[var(--muted)] mb-[18px] flex justify-between">
+          <span>Right now</span>
+          <span>{{ localTime }} · {{ timezone }}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-x-7 gap-y-[22px]">
+
+          <!-- Humidity -->
+          <div class="border-t border-[var(--line)] pt-[14px]">
+            <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.12em] uppercase text-[var(--muted)] flex items-center gap-[6px] mb-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-[13px] h-[13px] shrink-0">
+                <path d="M12 2c3 5 6 8 6 12a6 6 0 1 1-12 0c0-4 3-7 6-12z"/>
+              </svg>Humidity
+            </div>
+            <div class="[font-family:var(--serif)] text-[34px] leading-none tracking-[-.01em]">
+              {{ cur?.humidity }}<small class="[font-family:var(--sans)] text-[13px] text-[var(--muted)] ml-1 tracking-normal">%</small>
+            </div>
+            <div class="text-[12px] text-[var(--muted)] mt-1">
+              {{ (cur?.humidity ?? 0) < 40 ? 'Dry' : (cur?.humidity ?? 0) < 60 ? 'Comfortable' : 'Humid' }}
+            </div>
+          </div>
+
+          <!-- Wind -->
+          <div class="border-t border-[var(--line)] pt-[14px]">
+            <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.12em] uppercase text-[var(--muted)] flex items-center gap-[6px] mb-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-[13px] h-[13px] shrink-0">
+                <path d="M3 8h13a3 3 0 1 0-3-3M3 14h17a3 3 0 1 1-3 3M3 11h10"/>
+              </svg>Wind
+            </div>
+            <div class="[font-family:var(--serif)] text-[34px] leading-none tracking-[-.01em]">
+              {{ Math.round(cur?.wind_kph ?? 0) }}<small class="[font-family:var(--sans)] text-[13px] text-[var(--muted)] ml-1 tracking-normal">km/h</small>
+            </div>
+            <div class="text-[12px] text-[var(--muted)] mt-1">{{ cur?.wind_dir }}</div>
+          </div>
+
+          <!-- UV Index -->
+          <div class="border-t border-[var(--line)] pt-[14px]">
+            <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.12em] uppercase text-[var(--muted)] flex items-center gap-[6px] mb-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-[13px] h-[13px] shrink-0">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>
+              </svg>UV Index
+            </div>
+            <div class="[font-family:var(--serif)] text-[34px] leading-none tracking-[-.01em]">
+              {{ cur?.uv }}<small class="[font-family:var(--sans)] text-[13px] text-[var(--muted)] ml-1 tracking-normal">{{ uvLabel(cur?.uv) }}</small>
+            </div>
+          </div>
+
+          <!-- Pressure -->
+          <div class="border-t border-[var(--line)] pt-[14px]">
+            <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.12em] uppercase text-[var(--muted)] flex items-center gap-[6px] mb-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-[13px] h-[13px] shrink-0">
+                <path d="M3 12h3l2-6 4 12 3-9 2 3h4"/>
+              </svg>Pressure
+            </div>
+            <div class="[font-family:var(--serif)] text-[34px] leading-none tracking-[-.01em]">
+              {{ cur?.pressure_mb }}<small class="[font-family:var(--sans)] text-[13px] text-[var(--muted)] ml-1 tracking-normal">hPa</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sun cycle card -->
+      <div class="bg-[var(--ink)] text-[var(--cream)] rounded-[24px] py-6 px-7 flex items-center gap-[22px]">
+        <!-- Arc SVG -->
+        <div class="relative w-[88px] h-[54px] shrink-0">
+          <svg viewBox="0 0 100 60" class="w-full h-full overflow-visible block">
+            <path d="M5 55 Q50 -10 95 55" stroke="rgba(244,237,226,.35)" stroke-width="1.5" fill="none" stroke-dasharray="3 4"/>
+            <path d="M5 55 Q50 -10 95 55" stroke="var(--sun)" stroke-width="2" fill="none" stroke-dasharray="120" :stroke-dashoffset="arcDash"/>
+            <circle fill="var(--sun)" r="5" :cx="arcDot.x" :cy="arcDot.y"/>
+          </svg>
+        </div>
+        <!-- Sunrise -->
+        <div class="flex flex-col gap-1 [font-family:var(--mono)] text-[12px] tracking-[.06em]">
+          <span class="opacity-60 text-[10.5px] uppercase tracking-[.14em]">Sunrise</span>
+          <b class="font-medium tracking-[.04em]">{{ sunrise }}</b>
+        </div>
+        <!-- Sunset -->
+        <div class="flex flex-col gap-1 [font-family:var(--mono)] text-[12px] tracking-[.06em]">
+          <span class="opacity-60 text-[10.5px] uppercase tracking-[.14em]">Sunset</span>
+          <b class="font-medium tracking-[.04em]">{{ sunset }}</b>
+        </div>
+        <!-- Daylight left -->
+        <div class="ml-auto text-right">
+          <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.14em] uppercase opacity-[.55]">Daylight left</div>
+          <div class="[font-family:var(--serif)] text-[22px] italic mt-0.5">{{ daylight }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
