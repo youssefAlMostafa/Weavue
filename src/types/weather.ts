@@ -3,6 +3,9 @@ export interface WeatherLocation {
   country: string;
   localtime: string;
   region?: string;
+  lat?: number;
+  lon?: number;
+  tz_id?: string;
 }
 
 export interface WeatherCurrent {
@@ -15,9 +18,18 @@ export interface WeatherCurrent {
     code: number;
   };
   wind_kph?: number;
+  wind_dir?: string;
   humidity?: number;
   feelslike_c?: number;
   cloud: number;
+  uv?: number;
+  pressure_mb?: number;
+  vis_km?: number;
+  last_updated?: string;
+  air_quality?: {
+    pm2_5?: number;
+    'us-epa-index'?: number;
+  };
 }
 
 export interface WeatherData {
@@ -35,6 +47,8 @@ export interface ForecastDay {
     maxwind_kph: number;
     totalprecip_mm: number;
     avghumidity: number;
+    daily_chance_of_rain: number;
+    uv: number;
     condition: {
       text: string;
       icon: string;
@@ -48,11 +62,14 @@ export interface ForecastDay {
   hour: Array<{
     time: string;
     temp_c: number;
+    is_day: number;
     condition: {
       text: string;
       icon: string;
       code: number;
     };
+    chance_of_rain: number;
+    chance_of_snow: number;
   }>;
 }
 
