@@ -71,7 +71,7 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
   <!-- Main hero -->
   <section v-else class="grid grid-cols-[1.5fr_1fr] gap-6 mb-7 max-[1180px]:grid-cols-1">
 
-    <!-- ── Hero card ── -->
+    <!-- Hero card -->
     <div
       class="relative border border-[var(--line)] rounded-[24px] overflow-hidden min-h-[520px]"
       :class="textColor"
@@ -122,7 +122,7 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
         </div>
 
         <!-- City name -->
-        <div class="[font-family:var(--serif)] font-normal leading-[.96] tracking-[-.02em] mt-auto">
+        <div class="[font-family:var(--serif)] font-normal leading-[.96] tracking-[-.02em] my-auto">
           <span class="block text-[84px] max-[1180px]:text-[64px]">{{ loc?.name }}</span>
           <span class="block text-[24px] italic opacity-[.85]" :class="isNight ? 'text-[var(--cream)]' : 'text-[var(--ink-2)]'">
             {{ loc?.region }}, {{ loc?.country }}
@@ -146,7 +146,7 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
       </div>
     </div>
 
-    <!-- ── Stats stack ── -->
+    <!-- Stats stack -->
     <div class="flex flex-col gap-6">
 
       <!-- Metrics card -->
