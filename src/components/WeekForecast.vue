@@ -26,11 +26,14 @@ const days = computed(() => {
     const nowPct = i === 0
       ? ((curTemp - allMin) / range * 100).toFixed(1) + '%'
       : null
+    const icon = conditionCodeToIcon(d.day.condition.code, 1)
+
+    console.log(`[WeekForecast] day ${i} (${label}) | code: ${d.day.condition.code} | text: "${d.day.condition.text}" | icon: ${icon} | rain%: ${d.day.daily_chance_of_rain}`)
 
     return {
       label,
       sub,
-      icon:    conditionCodeToIcon(d.day.condition.code, 1),
+      icon,
       minTemp: Math.round(d.day.mintemp_c),
       maxTemp: Math.round(d.day.maxtemp_c),
       pop:     d.day.daily_chance_of_rain,

@@ -1,52 +1,55 @@
 <script setup lang="ts">
-import imgUrl from '../assets/images/logo.png'
-import { onMounted, ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
-defineProps<{
-  textColor?: string
-}>()
+const dateStr = ref('')
 
-const currentDate = ref('')
-
-const updateDateTime = () => {
-  const now = new Date()
-  currentDate.value =
-    now.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-}
 onMounted(() => {
-  updateDateTime();
+  const now = new Date()
+  const wd = now.toLocaleDateString('en-GB', { weekday: 'short' })
+  const d  = now.toLocaleDateString('en-GB', { day: '2-digit' })
+  const mo = now.toLocaleDateString('en-GB', { month: 'short' })
+  const yr = now.getFullYear()
+  dateStr.value = `${wd}  ${d} ${mo}  ${yr}`
 })
 </script>
+
 <template>
-  <nav class="flex py-[28px] relative z-20">
-    <div class="nav-container flex flex-1 items-center justify-between">
-      <div class="logo-cont gap-4 justify-center  shrink-0 items-center">
-        <img class="logo h-17 w-auto" :src="imgUrl" alt="Weavue" />
-      </div>
-      <div class="flex gap-9 max-md:hidden">
-        <p class="font-bold text-[24px] font-sans transition-colors duration-1000" :class="textColor || 'text-[#333333]'">{{ currentDate }}</p>
-      </div>
-      <div class="nav-accounts-btn text-lg flex gap-5 transition-colors duration-1000" :class="textColor || 'text-black'">
-        <a href="https://linkedin.com/in/youssef-al-mostafa" target="_blank" rel="noopener noreferrer" class="cursor-pointer hover:opacity-70 transition-opacity">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-linkedin"
-            viewBox="0 0 16 16">
-            <path
-              d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" />
-          </svg>
-        </a>
-        <a href="https://github.com/youssef-al-mostafa/Weavue" target="_blank" rel="noopener noreferrer" class="cursor-pointer hover:opacity-70 transition-opacity">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-github"
-            viewBox="0 0 16 16">
-            <path
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" />
-          </svg>
-        </a>
-      </div>
+  <header class="flex items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr] md:items-center px-1 pt-2 pb-4 border-b border-[var(--line)] mb-7">
+
+    <div class="flex items-baseline gap-[14px]">
+      <span class="[font-family:var(--serif)] italic text-[52px] tracking-[-.01em] leading-none">
+        Weavue<span class="inline-block w-2 h-2 rounded-full bg-[var(--sun)] translate-y-[-18px] ml-0.5"></span>
+      </span>
     </div>
-  </nav>
+
+    <div class="justify-self-center [font-family:var(--mono)] text-[16px] tracking-[.14em]
+                uppercase text-[var(--ink-2)] max-md:hidden">
+      {{ dateStr }}
+    </div>
+
+    <div class="justify-self-end flex items-center gap-[18px] text-[18px] text-[var(--muted)]">
+      <a
+        href="https://linkedin.com/in/youssef-al-mostafa"
+        target="_blank" rel="noopener"
+        class="flex items-center gap-[6px] transition-colors duration-200 hover:text-[var(--ink)]"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="w-4 h-4 max-md:w-[26px] max-md:h-[26px] max-md:aspect-square">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M8 10v8M8 7v.01M12 18v-5a3 3 0 0 1 6 0v5"/>
+        </svg>
+        <span class="max-sm:hidden">LinkedIn</span>
+      </a>
+      <a
+        href="https://github.com/youssef-al-mostafa/Weavue"
+        target="_blank" rel="noopener"
+        class="flex items-center gap-[6px] transition-colors duration-200 hover:text-[var(--ink)]"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 max-md:w-[26px] max-md:h-[26px] max-md:aspect-square">
+          <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/>
+        </svg>
+        <span class="max-sm:hidden">GitHub</span>
+      </a>
+    </div>
+
+  </header>
 </template>

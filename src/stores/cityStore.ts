@@ -3,7 +3,7 @@ import { useLocationStore } from './locationStore'
 
 export const useCityStore = defineStore('city', {
   state: () => ({
-    list: [] as Array<string>
+    list: ['Beirut'] as Array<string>
   }),
   actions: {
     addCity(city: string) {
