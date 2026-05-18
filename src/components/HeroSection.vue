@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { ForecastData } from '@/types/weather'
+import HeroSkeleton from '@/components/HeroSkeleton.vue'
 import {
   conditionCodeToSkyClass,
   formatCoords,
@@ -22,20 +23,26 @@ const loc   = computed(() => props.forecastData?.location)
 const cur   = computed(() => props.forecastData?.current)
 const today = computed(() => props.forecastData?.forecast.forecastday[0])
 
-const skyClass = computed(() =>
-  cur.value ? conditionCodeToSkyClass(cur.value.condition?.code ?? 1000, cur.value.is_day) : 'sky'
-)
+const skyClass = computed(() => {
+  if (!cur.value) return 'sky'
+  const code = cur.value.condition?.code ?? 1000
+  const isDay = cur.value.is_day
+  const result = conditionCodeToSkyClass(code, isDay)
+  console.log('[HeroSection] condition code:', code, '| is_day:', isDay, '| skyClass:', result)
+  return result
+})
 
 const skyGradient = computed(() => ({
   sky:      'linear-gradient(170deg,#f7c9a4 0%,#f4ede2 55%,#d8e3e8 100%)',
   dusk:     'linear-gradient(170deg,#4b6c8a 0%,#8a7a8e 50%,#e8a07a 100%)',
   night:    'linear-gradient(170deg,#1a2538 0%,#2c3e5a 60%,#4b6c8a 100%)',
   overcast: 'linear-gradient(170deg,#c8cdd0 0%,#dfe0dc 55%,#e9e3d5 100%)',
+  rain:     'linear-gradient(170deg,#2e4a62 0%,#4a6e8a 55%,#6a8ea8 100%)',
+  snow:     'linear-gradient(170deg,#c8d8e8 0%,#dde8f2 55%,#edf3f8 100%)',
 }[skyClass.value] ?? 'linear-gradient(170deg,#f7c9a4 0%,#f4ede2 55%,#d8e3e8 100%)'))
 
-const isNight    = computed(() => skyClass.value === 'night' || skyClass.value === 'dusk')
+const isNight    = computed(() => ['night', 'dusk', 'rain'].includes(skyClass.value))
 const textColor  = computed(() => isNight.value ? 'text-[var(--cream)]' : 'text-[var(--ink)]')
-const artOpacity = computed(() => isNight.value ? 0.55 : 0.95)
 
 const coords    = computed(() => loc.value?.lat && loc.value?.lon ? formatCoords(loc.value.lat, loc.value.lon) : '—')
 const localTime = computed(() => loc.value?.localtime ? formatLocalTime(loc.value.localtime) : '—')
@@ -51,14 +58,7 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
 </script>
 
 <template>
-  <!-- Loading skeleton -->
-  <div v-if="isLoading" class="grid grid-cols-[1.5fr_1fr] gap-6 mb-7 max-[1180px]:grid-cols-1">
-    <div class="rounded-[24px] border border-[var(--line)] bg-[var(--paper)] min-h-[520px] animate-pulse" />
-    <div class="flex flex-col gap-6">
-      <div class="rounded-[24px] border border-[var(--line)] bg-[var(--paper)] flex-1 animate-pulse min-h-[320px]" />
-      <div class="rounded-[24px] bg-[var(--ink)] animate-pulse h-[88px] opacity-20" />
-    </div>
-  </div>
+  <HeroSkeleton v-if="isLoading" />
 
   <!-- Empty state -->
   <div v-else-if="!forecastData" class="grid grid-cols-[1.5fr_1fr] gap-6 mb-7 max-[1180px]:grid-cols-1">
@@ -71,7 +71,7 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
   <!-- Main hero -->
   <section v-else class="grid grid-cols-[1.5fr_1fr] gap-6 mb-7 max-[1180px]:grid-cols-1">
 
-    <!-- ── Hero card ── -->
+    <!-- Hero card -->
     <div
       class="relative border border-[var(--line)] rounded-[24px] overflow-hidden min-h-[520px]"
       :class="textColor"
@@ -79,9 +79,9 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
     >
       <!-- Decorative sun art -->
       <svg
+        v-if="skyClass === 'sky'"
         class="absolute right-[-30px] top-[30px] w-[340px] h-[340px] z-[1] pointer-events-none"
         viewBox="0 0 200 200" fill="none" aria-hidden="true"
-        :style="{ opacity: artOpacity }"
       >
         <defs>
           <radialGradient id="heroSunG" cx="50%" cy="50%" r="50%">
@@ -104,25 +104,46 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
         </g>
       </svg>
 
+      <!-- Decorative rain art -->
+      <svg
+        v-if="skyClass === 'rain'"
+        class="absolute right-[-20px] top-[10px] w-[360px] h-[360px] z-[1] pointer-events-none"
+        viewBox="0 0 200 200" fill="none" aria-hidden="true"
+      >
+        <ellipse cx="115" cy="72" rx="48" ry="28" fill="rgba(255,255,255,0.08)"/>
+        <ellipse cx="85"  cy="82" rx="38" ry="26" fill="rgba(255,255,255,0.07)"/>
+        <ellipse cx="138" cy="84" rx="32" ry="22" fill="rgba(255,255,255,0.06)"/>
+        <g stroke="rgba(180,210,240,0.45)" stroke-width="2" stroke-linecap="round">
+          <line x1="78"  y1="112" x2="70"  y2="134"/>
+          <line x1="98"  y1="116" x2="90"  y2="140"/>
+          <line x1="118" y1="112" x2="110" y2="136"/>
+          <line x1="138" y1="116" x2="130" y2="138"/>
+          <line x1="158" y1="112" x2="150" y2="134"/>
+          <line x1="88"  y1="140" x2="82"  y2="158"/>
+          <line x1="108" y1="144" x2="102" y2="162"/>
+          <line x1="128" y1="140" x2="122" y2="158"/>
+          <line x1="148" y1="144" x2="142" y2="162"/>
+        </g>
+      </svg>
+
       <!-- Content -->
       <div class="py-9 px-[38px] flex flex-col min-h-[520px] relative z-[2]">
 
         <!-- Meta row -->
         <div class="flex justify-between items-start gap-4 [font-family:var(--mono)] text-[11.5px] tracking-[.12em] uppercase opacity-75">
           <span class="flex items-center gap-2">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="max-md:hidden">
               <path d="M12 22s7-7 7-12a7 7 0 1 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>
             </svg>
             {{ coords }}
           </span>
           <span class="flex items-center gap-[6px]">
-            <span class="inline-block w-[6px] h-[6px] rounded-full bg-[#3aa869] shadow-[0_0_0_4px_rgba(58,168,105,.18)]"></span>
-            Live · updated {{ updated }}
+             Updated {{ updated }}
           </span>
         </div>
 
         <!-- City name -->
-        <div class="[font-family:var(--serif)] font-normal leading-[.96] tracking-[-.02em] mt-auto">
+        <div class="[font-family:var(--serif)] font-normal leading-[.96] tracking-[-.02em] my-auto">
           <span class="block text-[84px] max-[1180px]:text-[64px]">{{ loc?.name }}</span>
           <span class="block text-[24px] italic opacity-[.85]" :class="isNight ? 'text-[var(--cream)]' : 'text-[var(--ink-2)]'">
             {{ loc?.region }}, {{ loc?.country }}
@@ -146,7 +167,7 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
       </div>
     </div>
 
-    <!-- ── Stats stack ── -->
+    <!-- Stats stack -->
     <div class="flex flex-col gap-6">
 
       <!-- Metrics card -->

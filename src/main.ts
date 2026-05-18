@@ -12,11 +12,3 @@ const app = createApp(App)
 app.use(pinia)
 
 app.mount('#app')
-
-const loader = document.getElementById('app-loader')
-if (loader) {
-  loader.classList.add('fade-out')
-  setTimeout(() => {
-    loader.remove()
-  }, 300)
-}
