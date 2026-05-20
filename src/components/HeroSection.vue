@@ -2,6 +2,8 @@
 import { computed } from 'vue'
 import type { ForecastData } from '@/types/weather'
 import HeroSkeleton from '@/components/HeroSkeleton.vue'
+import HeroSun from '@/components/HeroSun.vue'
+import HeroMoon from '@/components/HeroMoon.vue'
 import {
   conditionCodeToSkyClass,
   formatCoords,
@@ -68,48 +70,19 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
     <div class="rounded-[24px] border border-dashed border-[var(--line)] min-h-[200px]" />
   </div>
 
-  <!-- Main hero -->
   <section v-else class="grid grid-cols-[1.5fr_1fr] gap-6 mb-7 max-[1180px]:grid-cols-1">
-
-    <!-- Hero card -->
     <div
       class="relative border border-[var(--line)] rounded-[24px] overflow-hidden min-h-[520px]"
       :class="textColor"
-      :style="{ background: skyGradient }"
-    >
-      <!-- Decorative sun art -->
-      <svg
-        v-if="skyClass === 'sky'"
-        class="absolute right-[-30px] top-[30px] w-[340px] h-[340px] z-[1] pointer-events-none"
-        viewBox="0 0 200 200" fill="none" aria-hidden="true"
-      >
-        <defs>
-          <radialGradient id="heroSunG" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#fff3cf"/>
-            <stop offset="60%" stop-color="#f4b977"/>
-            <stop offset="100%" stop-color="#e8642e" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <circle cx="100" cy="100" r="58" fill="url(#heroSunG)"/>
-        <circle cx="100" cy="100" r="34" fill="#f4b977" opacity=".9"/>
-        <g stroke="#e8642e" stroke-width="2" stroke-linecap="round" opacity=".55">
-          <line x1="100" y1="20" x2="100" y2="36"/>
-          <line x1="100" y1="164" x2="100" y2="180"/>
-          <line x1="20"  y1="100" x2="36"  y2="100"/>
-          <line x1="164" y1="100" x2="180" y2="100"/>
-          <line x1="44"  y1="44"  x2="56"  y2="56"/>
-          <line x1="144" y1="144" x2="156" y2="156"/>
-          <line x1="44"  y1="156" x2="56"  y2="144"/>
-          <line x1="144" y1="56"  x2="156" y2="44"/>
-        </g>
-      </svg>
+      :style="{ background: skyGradient }">
+      <HeroMoon />
+      <!--<HeroSun />
+     
 
-      <!-- Decorative rain art -->
       <svg
         v-if="skyClass === 'rain'"
         class="absolute right-[-20px] top-[10px] w-[360px] h-[360px] z-[1] pointer-events-none"
-        viewBox="0 0 200 200" fill="none" aria-hidden="true"
-      >
+        viewBox="0 0 200 200" fill="none" aria-hidden="true">
         <ellipse cx="115" cy="72" rx="48" ry="28" fill="rgba(255,255,255,0.08)"/>
         <ellipse cx="85"  cy="82" rx="38" ry="26" fill="rgba(255,255,255,0.07)"/>
         <ellipse cx="138" cy="84" rx="32" ry="22" fill="rgba(255,255,255,0.06)"/>
@@ -124,12 +97,9 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
           <line x1="128" y1="140" x2="122" y2="158"/>
           <line x1="148" y1="144" x2="142" y2="162"/>
         </g>
-      </svg>
+      </svg>-->
 
-      <!-- Content -->
       <div class="py-9 px-[38px] flex flex-col min-h-[520px] relative z-[2]">
-
-        <!-- Meta row -->
         <div class="flex justify-between items-start gap-4 [font-family:var(--mono)] text-[11.5px] tracking-[.12em] uppercase opacity-75">
           <span class="flex items-center gap-2">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="max-md:hidden">
@@ -142,7 +112,6 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
           </span>
         </div>
 
-        <!-- City name -->
         <div class="[font-family:var(--serif)] font-normal leading-[.96] tracking-[-.02em] my-auto">
           <span class="block text-[84px] max-[1180px]:text-[64px]">{{ loc?.name }}</span>
           <span class="block text-[24px] italic opacity-[.85]" :class="isNight ? 'text-[var(--cream)]' : 'text-[var(--ink-2)]'">
@@ -150,7 +119,6 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
           </span>
         </div>
 
-        <!-- Temp + condition -->
         <div class="flex items-start gap-[18px] mt-6">
           <div class="[font-family:var(--serif)] text-[180px] max-[1180px]:text-[120px] leading-[.85] tracking-[-.04em] font-normal">
             {{ Math.round(cur?.temp_c ?? 0) }}<sup class="text-[.32em] font-normal align-top ml-[6px] opacity-70">°C</sup>
@@ -167,18 +135,13 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
       </div>
     </div>
 
-    <!-- Stats stack -->
     <div class="flex flex-col gap-6">
-
-      <!-- Metrics card -->
       <div class="flex-1 bg-[var(--paper)] border border-[var(--line)] rounded-[24px] p-7 pb-6">
         <div class="[font-family:var(--mono)] text-[11px] tracking-[.14em] uppercase text-[var(--muted)] mb-[18px] flex justify-between">
           <span>Right now</span>
           <span>{{ localTime }} · {{ timezone }}</span>
         </div>
         <div class="grid grid-cols-2 gap-x-7 gap-y-[22px]">
-
-          <!-- Humidity -->
           <div class="border-t border-[var(--line)] pt-[14px]">
             <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.12em] uppercase text-[var(--muted)] flex items-center gap-[6px] mb-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-[13px] h-[13px] shrink-0">
@@ -193,7 +156,6 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
             </div>
           </div>
 
-          <!-- Wind -->
           <div class="border-t border-[var(--line)] pt-[14px]">
             <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.12em] uppercase text-[var(--muted)] flex items-center gap-[6px] mb-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-[13px] h-[13px] shrink-0">
@@ -206,7 +168,6 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
             <div class="text-[12px] text-[var(--muted)] mt-1">{{ cur?.wind_dir }}</div>
           </div>
 
-          <!-- UV Index -->
           <div class="border-t border-[var(--line)] pt-[14px]">
             <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.12em] uppercase text-[var(--muted)] flex items-center gap-[6px] mb-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-[13px] h-[13px] shrink-0">
@@ -219,7 +180,6 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
             </div>
           </div>
 
-          <!-- Pressure -->
           <div class="border-t border-[var(--line)] pt-[14px]">
             <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.12em] uppercase text-[var(--muted)] flex items-center gap-[6px] mb-2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-[13px] h-[13px] shrink-0">
@@ -233,9 +193,7 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
         </div>
       </div>
 
-      <!-- Sun cycle card -->
       <div class="bg-[var(--ink)] text-[var(--cream)] rounded-[24px] py-6 px-7 flex items-center gap-[22px]">
-        <!-- Arc SVG -->
         <div class="relative w-[88px] h-[54px] shrink-0">
           <svg viewBox="0 0 100 60" class="w-full h-full overflow-visible block">
             <path d="M5 55 Q50 -10 95 55" stroke="rgba(244,237,226,.35)" stroke-width="1.5" fill="none" stroke-dasharray="3 4"/>
@@ -243,17 +201,14 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
             <circle fill="var(--sun)" r="5" :cx="arcDot.x" :cy="arcDot.y"/>
           </svg>
         </div>
-        <!-- Sunrise -->
         <div class="flex flex-col gap-1 [font-family:var(--mono)] text-[12px] tracking-[.06em]">
           <span class="opacity-60 text-[10.5px] uppercase tracking-[.14em]">Sunrise</span>
           <b class="font-medium tracking-[.04em]">{{ sunrise }}</b>
         </div>
-        <!-- Sunset -->
         <div class="flex flex-col gap-1 [font-family:var(--mono)] text-[12px] tracking-[.06em]">
           <span class="opacity-60 text-[10.5px] uppercase tracking-[.14em]">Sunset</span>
           <b class="font-medium tracking-[.04em]">{{ sunset }}</b>
         </div>
-        <!-- Daylight left -->
         <div class="ml-auto text-right">
           <div class="[font-family:var(--mono)] text-[10.5px] tracking-[.14em] uppercase opacity-[.55]">Daylight left</div>
           <div class="[font-family:var(--serif)] text-[22px] italic mt-0.5">{{ daylight }}</div>

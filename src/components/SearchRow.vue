@@ -105,7 +105,9 @@ onUnmounted(() => document.removeEventListener('keydown', handleGlobalKey))
 
       <!-- Suggestions -->
       <div v-if="showSuggestions || isSearching"
-        class="absolute top-[calc(100%+8px)] left-0 right-0 bg-[var(--paper)] border border-[var(--line)] rounded-[16px] shadow-[0_8px_24px_-8px_rgba(26,24,20,.15)] overflow-hidden z-50">
+        class="absolute top-[calc(100%+8px)] left-0 right-0 bg-[var(--paper)] border 
+               border-[var(--line)] rounded-[16px] shadow-[0_8px_24px_-8px_rgba(26,24,20,.15)] 
+               overflow-hidden z-50">
         <div v-if="isSearching" class="px-[18px] py-[14px] text-[13px] text-[var(--muted)]">Searching…</div>
         <button v-for="city in suggestions" :key="city.id"
           class="flex flex-col items-start w-full px-[18px] py-3 border-b border-[var(--line)] last:border-b-0 hover:bg-[var(--cream-2)] transition-colors text-left"
@@ -120,7 +122,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleGlobalKey))
 
     <!-- Use my location -->
     <button
-      class="inline-flex items-center gap-2 bg-white text-black!
+      class="inline-flex items-center gap-2 bg-[var(--paper)] text-black!
              border border-[var(--ink)] rounded-full px-4 py-[10px] text-[13.5px]
              transition-all duration-200 hover:bg-black hover:text-white! disabled:opacity-60
              disabled:cursor-not-allowed whitespace-nowrap"
@@ -134,7 +136,9 @@ onUnmounted(() => document.removeEventListener('keydown', handleGlobalKey))
 
     <!-- Reset all -->
     <button v-if="hasData()"
-      class="inline-flex items-center gap-2 bg-[var(--paper)] border border-[var(--line)] rounded-full px-4 py-[10px] text-[13.5px] text-[var(--ink-2)] transition-all duration-200 hover:border-[var(--ink)] hover:text-[var(--ink)] whitespace-nowrap"
+      class="inline-flex items-center gap-2 bg-[var(--paper)] border border-[var(--line)] 
+             rounded-full px-4 py-[10px] text-[13.5px] text-[var(--ink-2)] transition-all 
+             duration-200 hover:border-[var(--ink)] hover:bg-black hover:text-white! whitespace-nowrap"
       @click="resetAll">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="w-[14px] h-[14px]">
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
