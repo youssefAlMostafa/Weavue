@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { ForecastData } from '@/types/weather'
-import HeroSkeleton from '@/components/HeroSkeleton.vue'
-import HeroSun from '@/components/HeroSun.vue'
-import HeroMoon from '@/components/HeroMoon.vue'
+import HeroSkeleton from '@/components/ui/HeroSkeleton.vue'
+import Sun from '@/components/ui/weather/Sun.vue'
+import Moon from '@/components/ui/weather/Moon.vue'
 import {
   conditionCodeToSkyClass,
   formatCoords,
@@ -15,6 +15,10 @@ import {
   sunArcDot,
   uvLabel,
 } from '@/utils/weather'
+import CloudDay from '../ui/weather/CloudDay.vue'
+import CloudNight from '../ui/weather/CloudNight.vue'
+import Rain from '../ui/weather/Rain.vue'
+import Snow from '../ui/weather/Snow.vue'
 
 const props = defineProps<{
   forecastData: ForecastData | null
@@ -57,6 +61,19 @@ const daylight = computed(() => daylightLeft(sunset.value))
 const arcT     = computed(() => sunArcProgress(sunrise.value, sunset.value))
 const arcDot   = computed(() => sunArcDot(arcT.value))
 const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
+
+const weatherComponent = computed(() => {
+  const isDay = cur.value?.is_day === 1
+  switch (skyClass.value) {
+    case 'sky':      return isDay ? Sun : Moon
+    case 'dusk':     return Sun
+    case 'night':    return Moon
+    case 'overcast': return isDay ? CloudDay : CloudNight
+    case 'rain':     return Rain
+    case 'snow':     return Snow
+    default:         return isDay ? Sun : Moon
+  }
+})
 </script>
 
 <template>
@@ -75,29 +92,7 @@ const arcDash  = computed(() => Math.round(120 * (1 - arcT.value)))
       class="relative border border-[var(--line)] rounded-[24px] overflow-hidden min-h-[520px]"
       :class="textColor"
       :style="{ background: skyGradient }">
-      <HeroMoon />
-      <!--<HeroSun />
-     
-
-      <svg
-        v-if="skyClass === 'rain'"
-        class="absolute right-[-20px] top-[10px] w-[360px] h-[360px] z-[1] pointer-events-none"
-        viewBox="0 0 200 200" fill="none" aria-hidden="true">
-        <ellipse cx="115" cy="72" rx="48" ry="28" fill="rgba(255,255,255,0.08)"/>
-        <ellipse cx="85"  cy="82" rx="38" ry="26" fill="rgba(255,255,255,0.07)"/>
-        <ellipse cx="138" cy="84" rx="32" ry="22" fill="rgba(255,255,255,0.06)"/>
-        <g stroke="rgba(180,210,240,0.45)" stroke-width="2" stroke-linecap="round">
-          <line x1="78"  y1="112" x2="70"  y2="134"/>
-          <line x1="98"  y1="116" x2="90"  y2="140"/>
-          <line x1="118" y1="112" x2="110" y2="136"/>
-          <line x1="138" y1="116" x2="130" y2="138"/>
-          <line x1="158" y1="112" x2="150" y2="134"/>
-          <line x1="88"  y1="140" x2="82"  y2="158"/>
-          <line x1="108" y1="144" x2="102" y2="162"/>
-          <line x1="128" y1="140" x2="122" y2="158"/>
-          <line x1="148" y1="144" x2="142" y2="162"/>
-        </g>
-      </svg>-->
+      <component :is="weatherComponent" />
 
       <div class="py-9 px-[38px] flex flex-col min-h-[520px] relative z-[2]">
         <div class="flex justify-between items-start gap-4 [font-family:var(--mono)] text-[11.5px] tracking-[.12em] uppercase opacity-75">

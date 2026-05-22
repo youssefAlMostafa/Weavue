@@ -14,11 +14,11 @@ A modern, elegant weather application built with Vue.js that provides accurate w
 -  **Current Location Detection**: Automatically fetch weather for your current location with geolocation API
 -  **Multi-City Search**: Add and track weather for multiple cities simultaneously
 -  **Real-time Weather Data**: Live temperature, humidity, precipitation, and weather conditions
--  **Dynamic Weather-Themed UI**: Banner background and colors automatically adapt based on current weather conditions (sunny,  rainy,  cloudy, snowy) and time of day
--  **Interactive Forecast Charts**: Visual temperature trends with Chart.js showing max/min temperatures
+-  **Dynamic Weather-Themed UI**: Background gradients and custom SVG illustrations automatically adapt based on current weather conditions (sunny, rainy, cloudy, snowy) and time of day
+-  **Custom SVG Weather Illustrations**: Hand-crafted Sun, Moon, Cloud, Rain and Snow components that react to live weather data
 -  **3-Day Forecast**: Extended weather forecast with detailed daily conditions
 -  **Data Persistence**: Cities and location preferences saved to localStorage
--  **Day/Night Themes**: UI automatically adjusts colors for day and night conditions
+-  **Day/Night Themes**: UI automatically adjusts colors and illustrations for day and night conditions
 -  **Responsive Design**: Fully optimized for desktop, tablet, and mobile devices
 
 ##  Technologies Used
@@ -26,11 +26,10 @@ A modern, elegant weather application built with Vue.js that provides accurate w
 - **Frontend Framework**: Vue.js 3.5 with Composition API
 - **State Management**: Pinia 3.0 with localStorage persistence
 - **Type Safety**: TypeScript 5.7
-- **Styling**: Tailwind CSS 4.0 + DaisyUI
-- **Charts**: Chart.js + vue-chartjs
+- **Styling**: Tailwind CSS 4.0
 - **Build Tool**: Vite 6.2
 - **HTTP Client**: Axios
-- **Animations**: Lottie animations for weather icons
+- **Typography**: Instrument Serif · Geist · Geist Mono
 
 ##  Prerequisites
 
@@ -81,11 +80,17 @@ weavue/
 ├── src/                 # Source files
 │   ├── assets/          # Images and global styles
 │   ├── components/      # Vue components
-│   ├── composables/     # Reusable composition functions (useWeather)
+│   │   ├── app/         # App-specific components (SearchRow, CitiesGrid, CityCard)
+│   │   ├── core/        # Shell components (NavBar, Footer)
+│   │   ├── sections/    # Page sections (HeroSection, HourlyRow, WeekForecast, DetailCards)
+│   │   └── ui/          # UI primitives
+│   │       └── weather/ # SVG weather illustrations (Sun, Moon, CloudDay, CloudNight, Rain, Snow)
+│   ├── composables/     # Reusable composition functions (useWeather, useForecast)
 │   ├── router/          # Vue Router configuration
 │   ├── services/        # API service functions
 │   ├── stores/          # Pinia stores (cities, location)
 │   ├── types/           # TypeScript interfaces
+│   ├── utils/           # Helper functions
 │   ├── views/           # Page components
 │   ├── App.vue          # Root component
 │   └── main.ts          # Application entry point
@@ -98,8 +103,9 @@ weavue/
 ##  Key Highlights
 
 - **Smart State Management**: Utilizes Pinia with persistence plugin for seamless data retention across sessions
-- **Weather-Responsive Design**: Unique feature where the UI dynamically changes colors based on real-time weather conditions
-- **Data Visualization**: Professional temperature charts using Chart.js for better weather trend analysis
+- **Weather-Responsive Design**: UI dynamically changes gradients and SVG illustrations based on real-time weather conditions and time of day
+- **Custom SVG Illustrations**: Hand-crafted weather components (Sun, Moon, CloudDay, CloudNight, Rain, Snow) — no icon libraries, no Lottie
+- **Editorial Design System**: Clean cream/paper aesthetic with Instrument Serif, Geist and Geist Mono typography
 - **Modern Architecture**: Built with TypeScript, ensuring type safety and better developer experience
 - **Performance Optimized**: Lightning-fast builds with Vite and efficient reactivity with Vue 3 Composition API
 
@@ -107,15 +113,10 @@ weavue/
 
 - [WeatherAPI](https://www.weatherapi.com/) - Weather data and forecast API
 - [API Ninjas](https://api-ninjas.com/) - City information
-- [Chart.js](https://www.chartjs.org/) - Interactive chart library
-- [Google Fonts](https://fonts.google.com/) - Lobster, Lexend, Montserrat, and PT Sans fonts
-- [DaisyUI](https://daisyui.com/) - Component library for Tailwind CSS
+- [Google Fonts](https://fonts.google.com/) - Instrument Serif, Geist and Geist Mono fonts
 - [Heroicons](https://heroicons.com/) - Beautiful UI icons
-- [Lottie](https://lottiefiles.com/) - Animated weather icons
-
 
 ##  Contact
 
 - Youssef Al Mostafa [LinkedIn](https://linkedin.com/in/youssef-al-mostafa)
 - [youssefalmostafa2@gmail.com](mailto:youssefalmostafa2@gmail.com)
-  
